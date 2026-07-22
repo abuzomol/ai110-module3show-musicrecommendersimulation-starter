@@ -11,7 +11,17 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
+My version is called **SongFit 1.0**. It takes one listener's stated taste — a
+favorite genre, a favorite mood, a target energy level, and whether they like
+acoustic music — and returns the top 5 songs from the catalog with a reason for
+each one. Each song earns points on four features, the points are added up, and
+the songs are sorted by that total.
+
+The starter code did not score anything at all. It returned the first 5 songs in
+the file. I replaced that with real scoring, made the results stable and
+repeatable, and made the explanations come from the same numbers that produced
+the score. I also made the scorer swappable, which let me compare three different
+models without editing the recommender.
 
 ---
 
@@ -92,6 +102,50 @@ Both are ranked by the same code. This is what makes the experiments below a
 matter of swapping one object instead of editing the recommender, and it means
 the ablation baseline answers a real question: are the extra three features
 earning their complexity?
+
+### The Algorithm Recipe (finalized)
+
+The whole system as a step-by-step recipe:
+
+**Setup**
+
+1. Read the catalog CSV and turn every row into a `Song`, converting the numbers
+   from text and lower-casing `genre` and `mood` so matching is case-insensitive.
+2. Read the listener's four preferences into a `UserProfile`.
+
+**Score each song, one at a time, independently**
+
+3. **Genre points.** Split both genre labels into words and compute the fraction
+   of shared words out of all words used. Same label → 1. `pop` vs `indie pop` →
+   0.5. Nothing shared → 0. Multiply by **2.00**.
+4. **Mood points.** Same mood → 1. Different mood but same mood family → 0.6.
+   Otherwise → 0. Multiply by **1.50**.
+5. **Energy points.** Take the gap between the listener's target energy and the
+   song's energy. A gap of zero scores 1, and the score falls away smoothly as
+   the gap grows (a gap of about 0.29 halves it). Multiply by **1.50**.
+6. **Acoustic points.** Re-centre the song's acousticness so 0.5 becomes 0, fully
+   acoustic becomes +1 and fully electronic becomes −1. If the listener dislikes
+   acoustic music, flip the sign. Multiply by **0.75**. This is the only term
+   that can subtract.
+7. **Add the four numbers together.** That is the song's score. Keep the four
+   parts alongside the total — they are needed for the explanation.
+
+**Rank the scored songs as a set**
+
+8. Sort by score, highest first.
+9. Break ties by the lower song `id`, so the same input always gives the same
+   output.
+10. Keep the first `k`.
+
+**Explain**
+
+11. For each recommendation, take the parts that added at least 0.05 points, sort
+    them largest first, and state the top three as the reasons.
+12. If any part *subtracted* at least 0.05, append it as a caveat so the
+    explanation is honest about the song's weakness.
+13. If nothing scored above the threshold, say so plainly rather than inventing a
+    reason.
+
 
 ---
 
@@ -288,23 +342,67 @@ Ranks 2 and 3 are the mood-family rule doing its job: neither song is tagged
 
 Use this section to document the experiments you ran. For example:
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+- **What happened when you changed the weight on genre from 2.0 to 0.5?**
 
+No change in the ranking with the limited data. The scores changed, but the
+overall ranking did not. With the extended data I did observe a change in the
+ranking of the songs, but only for some listeners. The jazz fan's top 5 was
+reordered, while the pop, lofi, and melancholy listeners kept exactly the same
+top 5. The reason is that in this catalog the pop songs are also the happy,
+high-energy ones, so genre is partly redundant with mood and energy. Listeners in
+thin genres like jazz are the ones who feel the weight change.
+
+- **What happened when you added tempo or valence to the score?**
+
+Not much, because valence and tempo are largely redundant with genre and mood
+(they are highly correlated with them). I built a separate 6-feature model to
+test this and compared it against the original. For the pop and melancholy
+listeners the top 5 did not change at all, and for the lofi and jazz listeners
+only one song swapped.
+
+The exception was worth the effort. For a listener asking for sad pop music, the
+6-feature model replaced 3 of the 5 results. The original model had put
+`Confetti Kids` at rank 3, which is tagged `happy` with valence 0.88, because
+only 2 pop songs are tagged `sad` and the genre weight filled the rest of the
+list with any pop song. Valence catches that mistake and the original model
+cannot.
+
+- **How did your system behave for different types of users?**
+
+Different users with different profiles have different tastes and get a different
+ranking of the songs. The quality was not equal between them, though. The pop and
+lofi listeners got good results because those genres have 7 and 8 songs in the
+extended catalog. The jazz and folk listeners have far fewer songs to choose
+from, so their lists fill up with weaker matches and their results move much more
+when I change the weights.
+
+The worst case was asking for sad music on the original catalog. That catalog has
+no sad songs at all, so the system returned chill ambient and jazz instead and
+still displayed them like normal recommendations.
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
+- It only works on a tiny catalog. Even the extended version is 40 songs, so the
+  system often has to fill the list with weak matches.
+- It does not understand lyrics, language, era, or artist popularity. It only
+  knows the seven numbers and labels in the CSV.
+- It uses only 4 of those 7 features. Valence, tempo, and danceability are loaded
+  but never scored in the main model.
+- Because valence is unused, sadness is only skin-deep. Two songs both tagged
+  `sad` score the same even if one is far darker than the other.
+- It is unfair to listeners in thin genres. Folk and indie have 2 songs each, and
+  those listeners get weaker results that also move around much more when the
+  weights change.
+- It can return two nearly identical songs at the top, because the scoring rule
+  judges each song alone and cannot see that a slot is being wasted.
+- It always returns 5 songs, even when only 2 or 3 genuinely fit, and a weak
+  match is displayed in exactly the same format as a strong one.
+- Nothing is learned. The same listener sees the same 5 songs forever, and the
+  system never finds out whether it was right.
 
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+I go deeper on these in the model card, including the mood families being my own
+personal judgment and the genre matching failing on hyphenated genres.
 
 ---
 
@@ -316,8 +414,35 @@ Read and complete `model_card.md`:
 
 Write 1 to 2 paragraphs here about what you learned:
 
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+- about how recommenders turn data into predictions.
+
+Basically, there are two ways to do this: one is by comparing songs against a
+user profile and finding a match, and the other is by observing the behaviour of
+many users and clustering them to learn their behaviours. The first one does not
+really care how other users are listening or what their history is, while the
+second one does, like YouTube and Spotify. However, the second way requires crowd
+data and the tools to accumulate and mine those histories. My project can only do
+the first one, because the dataset has no other users in it at all.
+
+Giving weights basically prioritizes some features over others. Instead of
+choosing the weights by hand, we could use matrix decomposition such as Principal
+Component Analysis to find the important directions in the data. The real
+difference is that my weights are numbers I typed in myself, while a real system
+learns them from millions of interactions.
+
+- about where bias or unfairness could show up in systems like this.
+
+The clearest unfairness is that the system is only as good as the catalog. When I
+asked for sad music on the original 10 songs, it returned chill ambient and jazz
+with confident explanations, because there was no sad music to give. The scoring
+was not wrong; the data was missing, and the user cannot tell the difference.
+
+One thing I observed is that the claude tries its best to add sad music. I am not bothered by it, but all biases cases are made against sad music for some reason. For example this is a bias coming from Claude:
+
+"The full list of biases is in the model card, including the mood families that I
+decided on myself and the unused valence column that makes the system blind to
+how sad a song actually sounds.
+".
 
 
 

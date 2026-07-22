@@ -40,3 +40,5 @@ Also: Scoring is invariant to catalog composition; ranking is not.
 
 
 Document How The System Works section in README.md file i.e. how to run the files, how to run the tests, the initial data and the extended data and how were utilized.
+
+create a separate recommender.py weighted by adding the tempo and valence to the score. This should not pollute the original code. I just need to compare the results from them.
