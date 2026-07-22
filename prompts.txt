@@ -1,0 +1,42 @@
+Prompt: Read the README.md, model_card.md, main.py and recommender.py, tests/test_recommender.py as well as data files and brainstorm some options to design some options for the recommender model. Justify your reasoning and whether we need to add more data to test the models.
+
+Answer summary: Claude gives A-E options. From weighted additive score, vector similarity, two-stage: hard filter -> soft rank, diversity re-rank (MMR, or max 1 track per artist/genre in top-k), and finally strategy pattern wrapping all previous options. 
+
+Before we go further, what is SF10 entry in ai_interactions.md.?
+Answer summary: SF stands for stretch feature.
+
+Prompt: ok, implement options A + E with the import/packaging fixes and the property tests, then generate the extended catalog.
+
+Answer summary: Claude built a weighted recommender by adding some features together and assigning top k scores as output. It also made an extensive set of tests to test whether the order is in descending order, shuffling in the input doesn't matter and so on.
+
+Here are some questions about the recommender. How is it different than youtube or spotify? What is the difference between collaborative filtering (using other users' behavior) and content-based filtering (using song attributes)?
+
+Answer summary: 
+Youtube and spotify includes user's preference to manage their score. What we have implemented here is basically textbook recommender that follows songs attributes and tries to match with user's preference.
+
+Collaborative filtering ignores attributes entirely and uses only the user–item interaction matrix — who played/liked/skipped what. It comes in two flavors:
+
+Neighborhood: "users who liked what you liked also liked X" (user-user), or "people who play A also play B" (item-item, which is what Amazon and most production systems actually shipped because item-item similarities are stable and precomputable).
+Matrix factorization: decompose the interaction matrix into latent user and item vectors. The learned dimensions are uninterpretable but often capture things no one labeled — a "3am driving music" axis that cuts across genre.
+
+Claude made a recommender that score measures fit, while youtube and spotify predicts behaviour. Youtube for example predicts the watch time rather than the click-through for example (avoiding clickbait.)
+
+
+What is the math formula used to formulate the scoring rule in the weighted recommender?
+
+Answer summary; 
+
+Score(user, song) = a x genre(user's preferred genre, song genre) + b x Mood(user's mood, song mood) + c x E(target energy, song energy) + d x acousticness (user, song) 
+
+weights are given by (2,1.5, 1.5, 0.75).
+
+
+why we need both a "Scoring Rule" (for one song) and a "Ranking Rule" (for a list of songs) to build a recommendation system?
+
+Answer summary: 
+Because they answer different questions. Scoring rule: (user, song) --> R pointwise, and independent while ranking rule (user, [songs]) --> [songs] set level, comparative and selective.
+
+Also: Scoring is invariant to catalog composition; ranking is not.
+
+
+Document How The System Works section in README.md file i.e. how to run the files, how to run the tests, the initial data and the extended data and how were utilized.

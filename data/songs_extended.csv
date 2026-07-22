@@ -1,0 +1,41 @@
+id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
+1,Sunrise City,Neon Echo,pop,happy,0.82,118,0.84,0.79,0.18
+2,Midnight Coding,LoRoom,lofi,chill,0.42,78,0.56,0.62,0.71
+3,Storm Runner,Voltline,rock,intense,0.91,152,0.48,0.66,0.10
+4,Library Rain,Paper Lanterns,lofi,chill,0.35,72,0.60,0.58,0.86
+5,Gym Hero,Max Pulse,pop,intense,0.93,132,0.77,0.88,0.05
+6,Spacewalk Thoughts,Orbit Bloom,ambient,chill,0.28,60,0.65,0.41,0.92
+7,Coffee Shop Stories,Slow Stereo,jazz,relaxed,0.37,90,0.71,0.54,0.89
+8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22
+9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78
+10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35
+11,Empty Apartment,Grey Vellum,indie,sad,0.22,68,0.12,0.31,0.74
+12,Vacant Rooms,Pale Harbor,indie,sad,0.23,70,0.13,0.33,0.76
+13,Chrome Sunset,Neon Echo,synthwave,moody,0.71,112,0.44,0.70,0.19
+14,Static Bloom,Neon Echo,synthwave,moody,0.68,108,0.41,0.68,0.24
+15,Dust Motes,Paper Lanterns,lofi,chill,0.33,74,0.55,0.56,0.83
+16,Late Notes,LoRoom,lofi,focused,0.38,82,0.52,0.59,0.75
+17,Window Seat,Tape Hiss Club,lofi,relaxed,0.31,70,0.62,0.53,0.88
+18,Slow Wifi,Tape Hiss Club,lofi,chill,0.36,76,0.58,0.57,0.80
+19,Absolute Zero,Null Field,ambient,sad,0.00,50,0.05,0.10,1.00
+20,Redline,Max Pulse,rock,intense,1.00,178,0.55,0.72,0.00
+21,Paper Planes Again,Indigo Parade,indie pop,happy,0.72,120,0.78,0.80,0.38
+22,Golden Hour Drive,Indigo Parade,indie pop,happy,0.69,116,0.83,0.77,0.30
+23,Heartbreak Aisle,Marla Vane,pop,sad,0.44,92,0.18,0.48,0.42
+24,Voicemail,Marla Vane,pop,sad,0.39,86,0.21,0.45,0.55
+25,Confetti Kids,Sunbeam Radio,pop,happy,0.85,126,0.88,0.86,0.12
+26,Weekend Sprint,Sunbeam Radio,pop,intense,0.89,138,0.74,0.89,0.08
+27,Blue Iron,Voltline,rock,moody,0.78,140,0.30,0.58,0.14
+28,Amp Fever,Voltline,rock,intense,0.95,160,0.52,0.64,0.06
+29,Cold Trumpet,Slow Stereo,jazz,moody,0.34,88,0.28,0.47,0.85
+30,Sunday Brunch,Slow Stereo,jazz,happy,0.45,104,0.75,0.61,0.82
+31,Night Bus Blues,Ella Ridge,jazz,sad,0.29,76,0.19,0.42,0.90
+32,Deep Blue Drift,Orbit Bloom,ambient,relaxed,0.20,56,0.58,0.30,0.95
+33,Signal Lost,Orbit Bloom,ambient,moody,0.24,58,0.26,0.28,0.88
+34,Cathedral Static,Null Field,ambient,sad,0.18,52,0.14,0.22,0.97
+35,Neon Rain,Vector Youth,synthwave,intense,0.88,128,0.46,0.81,0.09
+36,Arcade Ghost,Vector Youth,synthwave,moody,0.73,118,0.38,0.75,0.16
+37,Treadmill Tempo,Max Pulse,pop,intense,0.97,145,0.70,0.90,0.04
+38,Quiet Ambition,Paper Lanterns,lofi,focused,0.42,84,0.54,0.60,0.72
+39,Porch Light,Ella Ridge,folk,relaxed,0.32,80,0.64,0.44,0.93
+40,Winter Letters,Ella Ridge,folk,sad,0.27,74,0.16,0.38,0.94
