@@ -376,10 +376,11 @@ extended catalog. The jazz and folk listeners have far fewer songs to choose
 from, so their lists fill up with weaker matches and their results move much more
 when I change the weights.
 
+
+** How claude is concerned about biases. (claude answer's not mine!!!)
 The worst case was asking for sad music on the original catalog. That catalog has
 no sad songs at all, so the system returned chill ambient and jazz instead and
 still displayed them like normal recommendations.
----
 
 ## Limitations and Risks
 
